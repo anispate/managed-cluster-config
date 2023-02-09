@@ -5684,19 +5684,28 @@ objects:
             kind: ConfigurationPolicy
             metadata:
               name: route-monitor-operator
-              namespace: openshift-route-monitor-operator
             spec:
-              namespaceSelector:
-                include:
-                - ocm-*-*-*
-                exclude: []
+              remediationAction: enforce
+              object-templates:
+                apiVersion: package-operator.run/v1alpha1
+                kind: ClusterPackage
+                metadata:
+                  name: route-monitor-operator
+                  spec:
+                    image: quay.io/achvatal/route-monitor-operator:package
+        - objectDefinition:
+            apiVersion: policy.open-cluster-management.io/v1
+            kind: ConfigurationPolicy
+            metadata:
+              name: console-urlmonitor
+            spec:
               remediationAction: enforce
               object-templates:
                 apiVersion: monitoring.openshift.io/v1alpha1
                 kind: RouteMonitor
                 metadata:
                   finalizers:
-                  - routeMonitor.routemonitoroperator.monitoring.openshift.io/finalizer
+                  - routemonitor.routemonitoroperator.monitoring.openshift.io/finalizer
                   labels:
                     hive.openshift.io/managed: 'true'
                   name: console
@@ -5705,7 +5714,7 @@ objects:
                     namespace: openshift-console
                     name: console
                   slo:
-                    targetAvailabilityPercent: "99.5"
+                    targetAvailabilityPercent: '99.5'
     - apiVersion: apps.open-cluster-management.io/v1
       kind: PlacementRule
       metadata:

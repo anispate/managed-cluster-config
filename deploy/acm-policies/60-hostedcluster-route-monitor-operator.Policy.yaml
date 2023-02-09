@@ -14,12 +14,22 @@ spec:
         kind: ConfigurationPolicy
         metadata:
           name: route-monitor-operator
-          namespace: openshift-route-monitor-operator
         spec:
-          namespaceSelector:
-            # pattern is "ocm-<staging|production>-<clusterid>-<clustername>"
-            include: ["ocm-*-*-*"]
-            exclude: []
+          remediationAction: enforce
+          object-templates:
+            # install route-monitor-operator
+            apiVersion: package-operator.run/v1alpha1
+            kind: ClusterPackage
+            metadata:
+                name: route-monitor-operator
+                spec:
+                    image: quay.io/achvatal/route-monitor-operator:package
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: console-urlmonitor
+        spec:
           remediationAction: enforce
           object-templates:
             # the RouteMonitor to deploy
