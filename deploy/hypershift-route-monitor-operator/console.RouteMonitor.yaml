@@ -1,0 +1,15 @@
+---
+apiVersion: monitoring.openshift.io/v1alpha1
+kind: RouteMonitor
+metadata:
+  finalizers:
+  - routemonitor.routemonitoroperator.monitoring.openshift.io/finalizer
+  labels:
+    hive.openshift.io/managed: "true"
+  name: console
+spec:
+  route:
+    namespace: openshift-console
+    name: console
+  slo:
+    targetAvailabilityPercent: "99.5"
