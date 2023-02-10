@@ -2893,6 +2893,80 @@ objects:
           policy.open-cluster-management.io/categories: CM Configuration Management
           policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
           policy.open-cluster-management.io/standards: NIST SP 800-53
+        name: hypershift-route-monitor-operator
+        namespace: openshift-acm-policies
+      spec:
+        disabled: false
+        policy-templates:
+        - objectDefinition:
+            apiVersion: policy.open-cluster-management.io/v1
+            kind: ConfigurationPolicy
+            metadata:
+              name: hypershift-route-monitor-operator
+            spec:
+              evaluationInterval:
+                compliant: 2h
+                noncompliant: 45s
+              object-templates:
+              - complianceType: musthave
+                objectDefinition:
+                  apiVersion: monitoring.openshift.io/v1alpha1
+                  kind: RouteMonitor
+                  metadata:
+                    finalizers:
+                    - routemonitor.routemonitoroperator.monitoring.openshift.io/finalizer
+                    labels:
+                      hive.openshift.io/managed: 'true'
+                    name: console
+                  spec:
+                    route:
+                      name: console
+                      namespace: openshift-console
+                    slo:
+                      targetAvailabilityPercent: '99.5'
+              - complianceType: musthave
+                objectDefinition:
+                  apiVersion: package-operator.run/v1alpha1
+                  kind: ClusterPackage
+                  metadata:
+                    name: route-monitor-operator
+                  spec:
+                    image: quay.io/achvatal/route-monitor-operator:package
+              pruneObjectBehavior: DeleteIfCreated
+              remediationAction: enforce
+              severity: low
+    - apiVersion: apps.open-cluster-management.io/v1
+      kind: PlacementRule
+      metadata:
+        name: placement-hypershift-route-monitor-operator
+        namespace: openshift-acm-policies
+      spec:
+        clusterSelector:
+          matchExpressions:
+          - key: hypershift.open-cluster-management.io/hosted-cluster
+            operator: In
+            values:
+            - 'true'
+    - apiVersion: policy.open-cluster-management.io/v1
+      kind: PlacementBinding
+      metadata:
+        name: binding-hypershift-route-monitor-operator
+        namespace: openshift-acm-policies
+      placementRef:
+        apiGroup: apps.open-cluster-management.io
+        kind: PlacementRule
+        name: placement-hypershift-route-monitor-operator
+      subjects:
+      - apiGroup: policy.open-cluster-management.io
+        kind: Policy
+        name: hypershift-route-monitor-operator
+    - apiVersion: policy.open-cluster-management.io/v1
+      kind: Policy
+      metadata:
+        annotations:
+          policy.open-cluster-management.io/categories: CM Configuration Management
+          policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+          policy.open-cluster-management.io/standards: NIST SP 800-53
         name: osd-backplane-managed-scripts
         namespace: openshift-acm-policies
       spec:
@@ -5669,68 +5743,6 @@ objects:
       - apiGroup: policy.open-cluster-management.io
         kind: Policy
         name: rosa-console-branding
-    - apiVersion: policy.open-cluster-management.io/v1
-      kind: Policy
-      metadata:
-        annotations:
-          policy.open-cluster-management.io/categories: CM Configuration Management
-        name: route-monitor-operator
-        namespace: openshift-acm-policies
-      spec:
-        disabled: false
-        policy-templates:
-        - objectDefinition:
-            apiVersion: policy.open-cluster-management.io/v1
-            kind: ConfigurationPolicy
-            metadata:
-              name: route-monitor-operator
-              namespace: openshift-acm-policies
-            spec:
-              namespaceSelector:
-                include:
-                - ocm-*-*-*
-                exclude: []
-              remediationAction: enforce
-              object-templates:
-                apiVersion: monitoring.openshift.io/v1alpha1
-                kind: RouteMonitor
-                metadata:
-                  finalizers:
-                  - routeMonitor.routemonitoroperator.monitoring.openshift.io/finalizer
-                  labels:
-                    hive.openshift.io/managed: 'true'
-                  name: console
-                spec:
-                  route:
-                    namespace: openshift-console
-                    name: console
-                  slo:
-                    targetAvailabilityPercent: "99.5"
-    - apiVersion: apps.open-cluster-management.io/v1
-      kind: PlacementRule
-      metadata:
-        name: placement-route-monitor-operator
-        namespace: openshift-acm-policies
-      spec:
-        clusterSelector:
-          matchExpressions:
-          - key: hypershift.open-cluster-management.io/hosted-cluster
-            operator: In
-            values:
-            - 'true'
-    - apiVersion: apps.open-cluster-management.io/v1
-      kind: PlacementBinding
-      metadata:
-        name: binding-route-monitor-operator
-        namespace: openshift-acm-policies
-      placementRef:
-        apiGroup: apps.open-cluster-management.io
-        kind: PlacementRule
-        name: placement-route-monitor-operator
-      subjects:
-      - apiGroup: policy.open-cluster-management.io
-        kind: Policy
-        name: route-monitor-operator
 - apiVersion: hive.openshift.io/v1
   kind: SelectorSyncSet
   metadata:
@@ -21428,6 +21440,40 @@ objects:
       patch: '{ "metadata": {"labels": {"network.openshift.io/policy-group":"monitoring"}
         } }'
       patchType: merge
+- apiVersion: hive.openshift.io/v1
+  kind: SelectorSyncSet
+  metadata:
+    labels:
+      managed.openshift.io/gitHash: ${IMAGE_TAG}
+      managed.openshift.io/gitRepoName: ${REPO_NAME}
+      managed.openshift.io/osd: 'true'
+    name: hypershift-route-monitor-operator
+  spec:
+    clusterDeploymentSelector:
+      matchLabels:
+        api.openshift.com/managed: 'true'
+    resourceApplyMode: Sync
+    resources:
+    - apiVersion: monitoring.openshift.io/v1alpha1
+      kind: RouteMonitor
+      metadata:
+        finalizers:
+        - routemonitor.routemonitoroperator.monitoring.openshift.io/finalizer
+        labels:
+          hive.openshift.io/managed: 'true'
+        name: console
+      spec:
+        route:
+          namespace: openshift-console
+          name: console
+        slo:
+          targetAvailabilityPercent: '99.5'
+    - apiVersion: package-operator.run/v1alpha1
+      kind: ClusterPackage
+      metadata:
+        name: route-monitor-operator
+      spec:
+        image: quay.io/achvatal/route-monitor-operator:package
 - apiVersion: hive.openshift.io/v1
   kind: SelectorSyncSet
   metadata:
