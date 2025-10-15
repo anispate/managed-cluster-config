@@ -35041,6 +35041,11 @@ objects:
     clusterDeploymentSelector:
       matchLabels:
         api.openshift.com/managed: 'true'
+      matchExpressions:
+      - key: ext-hypershift.openshift.io/cluster-type
+        operator: NotIn
+        values:
+        - management-cluster
     resourceApplyMode: Sync
     resources:
     - apiVersion: v1
@@ -35107,6 +35112,53 @@ objects:
           \  - name: openshift-route-controller-manager\n  - name: openshift-service-ca\n\
           \  - name: openshift-service-ca-operator\n  - name: openshift-user-workload-monitoring\n\
           \  - name: openshift-vsphere-infra\n"
+- apiVersion: hive.openshift.io/v1
+  kind: SelectorSyncSet
+  metadata:
+    labels:
+      managed.openshift.io/gitHash: ${IMAGE_TAG}
+      managed.openshift.io/gitRepoName: ${REPO_NAME}
+      managed.openshift.io/osd: 'true'
+    name: osd-managed-resources-management-cluster
+  spec:
+    clusterDeploymentSelector:
+      matchLabels:
+        api.openshift.com/managed: 'true'
+      matchExpressions:
+      - key: ext-hypershift.openshift.io/cluster-type
+        operator: In
+        values:
+        - management-cluster
+    resourceApplyMode: Sync
+    resources:
+    - apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: managed-namespaces
+        namespace: openshift-monitoring
+      data:
+        managed_namespaces.yaml: "Resources:\n  Namespace:\n  - name: dedicated-admin\n\
+          \  - name: dynatrace\n  - name: openshift-addon-operator\n  - name: openshift-aqua\n\
+          \  - name: openshift-aws-vpce-operator\n  - name: openshift-backplane\n\
+          \  - name: openshift-backplane-cee\n  - name: openshift-backplane-csa\n\
+          \  - name: openshift-backplane-cse\n  - name: openshift-backplane-csm\n\
+          \  - name: openshift-backplane-managed-scripts\n  - name: openshift-backplane-mobb\n\
+          \  - name: openshift-backplane-srep\n  - name: openshift-backplane-tam\n\
+          \  - name: openshift-cloud-ingress-operator\n  - name: openshift-codeready-workspaces\n\
+          \  - name: openshift-compliance\n  - name: openshift-compliance-monkey\n\
+          \  - name: openshift-container-security\n  - name: openshift-custom-domains-operator\n\
+          \  - name: openshift-customer-monitoring\n  - name: openshift-deployment-validation-operator\n\
+          \  - name: openshift-managed-node-metadata-operator\n  - name: openshift-file-integrity\n\
+          \  - name: openshift-logging\n  - name: openshift-managed-upgrade-operator\n\
+          \  - name: openshift-must-gather-operator\n  - name: openshift-observability-operator\n\
+          \  - name: openshift-ocm-agent-operator\n  - name: openshift-operators-redhat\n\
+          \  - name: openshift-osd-metrics\n  - name: openshift-rbac-permissions\n\
+          \  - name: openshift-route-monitor-operator\n  - name: openshift-scanning\n\
+          \  - name: openshift-security\n  - name: openshift-splunk-forwarder-operator\n\
+          \  - name: openshift-sre-pruning\n  - name: openshift-suricata\n  - name:\
+          \ openshift-validation-webhook\n  - name: openshift-velero\n  - name: openshift-monitoring\n\
+          \  - name: openshift\n  - name: openshift-cluster-version\n  - name: goalert\n\
+          \  - name: keycloak\n  - name: configure-goalert-operator\n"
 - apiVersion: hive.openshift.io/v1
   kind: SelectorSyncSet
   metadata:

@@ -3,5 +3,5 @@ selectorSyncSet:
   resourceApplyMode: "Sync"
   matchExpressions:
   - key: ext-hypershift.openshift.io/cluster-type
-    operator: NotIn
+    operator: In
     values: ["management-cluster"]
