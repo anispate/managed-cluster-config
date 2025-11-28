@@ -89,6 +89,7 @@ spec:
             namespace: dynatrace
             severity: critical
             state: missing
+            send_managed_notification: "true"
 
         - alert: DynatraceDynakubeComponentsDegradedSRE
           expr: (kube_daemonset_status_desired_number_scheduled{namespace="dynatrace", daemonset=~"hs-mc.+"} - kube_daemonset_status_number_ready{namespace="dynatrace", daemonset=~"hs-mc.+"}) > 0
@@ -98,6 +99,7 @@ spec:
             severity: critical
             daemonset: hcp-workload-oneagent
             state: degraded
+            send_managed_notification: "true"
           annotations:
             summary: "HCP workload oneagent pods degraded"
             description: "At least one HCP workload oneagent pod in the 'dynatrace' namespace is not available for 60 minutes."
@@ -116,6 +118,7 @@ spec:
             severity: critical
             statefulset: activegate
             state: missing
+            send_managed_notification: "true"
 
         - alert: DynatraceDynakubeComponentsDegradedSRE
           expr: (kube_statefulset_replicas{namespace="dynatrace", statefulset=~"hs-mc-.+"} - kube_statefulset_status_replicas_ready{namespace="dynatrace", statefulset=~"hs-mc.+"}) > 0
@@ -125,6 +128,7 @@ spec:
             severity: critical
             statefulset: activegate
             state: degraded
+            send_managed_notification: "true"
           annotations:
             summary: "Dynatrace Activegate pods degraded"
             description: "At least one activegate pod in the 'dynatrace' namespace is not available for 60 minutes."
