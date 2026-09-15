@@ -47011,7 +47011,7 @@ objects:
               \ (\n    label_replace(csv_succeeded, \"name\", \"$1\", \"name\", \"\
               ([^.]+).*\")\n  ^ on (name) group_left (channel, package)\n    (\n \
               \     max by (name, channel, package) (subscription_sync_total{name=~\"\
-              addon-operator|aws-vpce-operator|custom-domains-operator|managed-node-metadata-operator|managed-upgrade-operator|must-gather-operator|ocm-agent-operator|osd-metrics-exporter|rbac-permissions-operator|openshift-splunk-forwarder-operator|aws-account-operator|certman-operator|cloud-ingress-operator|configure-alertmanager-operator|deadmanssnitch-operator|deployment-validation-operator|dynatrace-operator|gcp-project-operator|managed-velero-operator|observability-operator|opentelemetry-operator|pagerduty-operator|route-monitor-operator\"\
+              addon-operator|aws-vpce-operator|managed-node-metadata-operator|managed-upgrade-operator|must-gather-operator|ocm-agent-operator|osd-metrics-exporter|rbac-permissions-operator|openshift-splunk-forwarder-operator|aws-account-operator|certman-operator|cloud-ingress-operator|configure-alertmanager-operator|deadmanssnitch-operator|deployment-validation-operator|dynatrace-operator|gcp-project-operator|managed-velero-operator|observability-operator|opentelemetry-operator|pagerduty-operator|route-monitor-operator\"\
               })\n      or\n      label_replace(\n        max by (channel, package)\
               \ (subscription_sync_total{name=\"redhat-oadp-operator\"}),\n      \
               \  \"name\", \"oadp-operator\", \"name\", \".*\"\n      )\n    )\n)\n"
